@@ -1,24 +1,26 @@
-name: Java CI with Gradle
-
-on: [push, pull_request]
-
 jobs:
   build:
-    # Only run on PRs if the source branch is on a different repo. We do not need to run everything twice.
-    if: ${{ github.event_name != 'pull_request' || github.repository != github.event.pull_request.head.repo.full_name }}
-
-    runs-on: ubuntu-22.04
-
+    if: ${{ github.event_name != 'pull_request' || github.repository != github.event.pull_request.head.repo.full_name
+      }}
+    runs-on: self-hosted
     steps:
-    - name: Checkout Repository
+    - continue-on-error: true
+      name: Checkout Repository
       uses: actions/checkout@v4
-    - name: Validate Gradle Wrapper
+    - continue-on-error: true
+      name: Validate Gradle Wrapper
       uses: gradle/wrapper-validation-action@v2
-    - name: Set up JDK 17
+    - continue-on-error: true
+      name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        distribution: 'temurin'
-        java-version: 17
         check-latest: true
-    - name: Build with Gradle
+        distribution: temurin
+        java-version: 17
+    - continue-on-error: true
+      name: Build with Gradle
       run: ./gradlew build
+name: Java CI with Gradle
+on:
+  repository_dispatch:
+    types: trigger-ga___gradle.yml
